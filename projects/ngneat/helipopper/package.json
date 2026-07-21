@@ -1,6 +1,6 @@
 {
   "name": "@salesware/helipopper",
-  "version": "14.0.0",
+  "version": "22.0.0",
   "description": "A Powerful Tooltip and Popover for Angular Applications",
   "dependencies": {
     "tslib": "^2.3.0",
