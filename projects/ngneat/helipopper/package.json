@@ -1,6 +1,6 @@
 {
-  "name": "@ngneat/helipopper",
-  "version": "13.1.2",
+  "name": "@salesware/helipopper",
+  "version": "14.0.0",
   "description": "A Powerful Tooltip and Popover for Angular Applications",
   "dependencies": {
     "tslib": "^2.3.0",
@@ -8,7 +8,7 @@
     "tippy.js": "6.3.7"
   },
   "peerDependencies": {
-    "@angular/core": ">=21.0.0"
+    "@angular/core": ">=22.0.0"
   },
   "keywords": [
     "angular",

@@ -6,7 +6,7 @@ import {
   provideTippyLoader,
   tooltipVariation,
   withContextMenuVariation,
-} from '@ngneat/helipopper/config';
+} from '@salesware/helipopper/config';
 
 import { routes } from './app.routes';
 

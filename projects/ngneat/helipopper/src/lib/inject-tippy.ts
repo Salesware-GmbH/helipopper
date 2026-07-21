@@ -1,5 +1,5 @@
 import { inject, InjectionToken } from '@angular/core';
-import type { TippyInstance } from '@ngneat/helipopper/config';
+import type { TippyInstance } from '@salesware/helipopper/config';
 
 import { TippyErrorCode } from './utils';
 

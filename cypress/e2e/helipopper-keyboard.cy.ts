@@ -5,7 +5,7 @@ Cypress.on('scrolled', (element) => {
   });
 });
 
-describe('@ngneat/helipopper — keyboard navigation', () => {
+describe('@salesware/helipopper — keyboard navigation', () => {
   const popperSelector = '.tippy-box .tippy-content';
   const tooltipButton = '[data-cy="default-tooltip-button"]';
 

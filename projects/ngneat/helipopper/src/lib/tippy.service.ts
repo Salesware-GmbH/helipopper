@@ -13,7 +13,7 @@ import {
   ExtendedTippyInstance,
   TIPPY_CONFIG,
   TippyInstance,
-} from '@ngneat/helipopper/config';
+} from '@salesware/helipopper/config';
 
 import { TIPPY_REF } from './inject-tippy';
 import { TippyFactory } from './tippy.factory';

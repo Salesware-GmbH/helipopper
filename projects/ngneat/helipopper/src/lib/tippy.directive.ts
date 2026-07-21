@@ -53,7 +53,7 @@ import {
   type TippyContent,
   type TippyInstance,
   type TippyProps,
-} from '@ngneat/helipopper/config';
+} from '@salesware/helipopper/config';
 import { TippyFactory } from './tippy.factory';
 import { TippyService } from './tippy.service';
 import { coerceBooleanAttribute } from './coercion';

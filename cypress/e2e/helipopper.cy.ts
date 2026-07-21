@@ -10,7 +10,7 @@ Cypress.on('scrolled', (element) => {
   });
 });
 
-describe('@ngneat/helipopper', () => {
+describe('@salesware/helipopper', () => {
   const playground = '#tippy-playground';
   const popperSelector = '.tippy-box .tippy-content';
 

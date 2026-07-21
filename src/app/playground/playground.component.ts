@@ -11,8 +11,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { ExampleComponent } from '../example/example.component';
 import { BindingsExampleComponent } from '../bindings-example/bindings-example.component';
-import type { TippyContent, TippyInstance } from '@ngneat/helipopper/config';
-import { TippyDirective, TippyService } from '@ngneat/helipopper';
+import type { TippyContent, TippyInstance } from '@salesware/helipopper/config';
+import { TippyDirective, TippyService } from '@salesware/helipopper';
 import type { Placement } from 'tippy.js';
 import { startWith } from 'rxjs';
 

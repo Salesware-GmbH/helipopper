@@ -1,9 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { injectTippyRef } from '@ngneat/helipopper';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { injectTippyRef } from '@salesware/helipopper';
 
 @Component({
   selector: 'app-example',
   templateUrl: './example.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class ExampleComponent implements OnInit, OnDestroy {
