@@ -1,7 +1,7 @@
 import type tippy from 'tippy.js';
 import { inject, Injectable, NgZone, ɵisPromise as isPromise } from '@angular/core';
 import { defer, Observable, of, tap } from 'rxjs';
-import { TIPPY_LOADER } from '@ngneat/helipopper/config';
+import { TIPPY_LOADER } from '@salesware/helipopper/config';
 
 @Injectable({ providedIn: 'root' })
 export class TippyFactory {

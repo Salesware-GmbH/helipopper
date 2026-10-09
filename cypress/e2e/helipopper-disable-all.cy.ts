@@ -5,7 +5,7 @@ Cypress.on('scrolled', (element) => {
   });
 });
 
-describe('@ngneat/helipopper — disableAll / enableAll', () => {
+describe('@salesware/helipopper — disableAll / enableAll', () => {
   const popperSelector = '.tippy-box .tippy-content';
   const tooltipA = '[data-cy="disable-all-tooltip-a"]';
   const tooltipB = '[data-cy="disable-all-tooltip-b"]';

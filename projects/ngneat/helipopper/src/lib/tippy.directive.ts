@@ -53,7 +53,7 @@ import {
   type TippyContent,
   type TippyInstance,
   type TippyProps,
-} from '@ngneat/helipopper/config';
+} from '@salesware/helipopper/config';
 import { TippyFactory } from './tippy.factory';
 import { TippyService } from './tippy.service';
 import { coerceBooleanAttribute } from './coercion';
@@ -285,7 +285,14 @@ export class TippyDirective implements OnChanges, AfterViewInit {
     afterEveryRender({
       read: () => {
         if (!this.onlyTextOverflow()) return;
-        untracked(() => this.checkOverflow(isElementOverflow(this.host())));
+        // `afterEveryRender` fires for every render across the whole app, even
+        // while this host is detached from the DOM (recycled virtual-scroll
+        // row, toggled `*ngIf`, teardown). A detached element has no parent and
+        // no meaningful overflow state, so `isElementOverflow` would crash on
+        // `host.parentElement`. Skip until the host is reconnected.
+        const host = this.host();
+        if (!host?.isConnected) return;
+        untracked(() => this.checkOverflow(isElementOverflow(host)));
       },
     });
 

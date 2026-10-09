@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "strict": true,
     "esModuleInterop": true,
@@ -13,10 +12,10 @@
     "target": "ES2022",
     "module": "es2020",
     "paths": {
-      "@ngneat/helipopper/config": [
-        "projects/ngneat/helipopper/config/src/public-api.ts"
+      "@salesware/helipopper/config": [
+        "./projects/ngneat/helipopper/config/src/public-api.ts"
       ],
-      "@ngneat/helipopper": ["projects/ngneat/helipopper/src/public-api.ts"]
+      "@salesware/helipopper": ["./projects/ngneat/helipopper/src/public-api.ts"]
     },
     "useDefineForClassFields": false
   },

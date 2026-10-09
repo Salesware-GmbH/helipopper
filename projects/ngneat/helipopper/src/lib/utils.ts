@@ -1,7 +1,7 @@
 import { ElementRef } from '@angular/core';
 import { Observable } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
-import type { TippyElement } from '@ngneat/helipopper/config';
+import type { TippyElement } from '@salesware/helipopper/config';
 
 import { IntersectionObserver } from './intersection-observer';
 

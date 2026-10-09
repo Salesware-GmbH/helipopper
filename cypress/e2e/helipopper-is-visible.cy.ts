@@ -10,7 +10,7 @@ Cypress.on('scrolled', element => {
   });
 });
 
-describe('@ngneat/helipopper/is_visible', () => {
+describe('@salesware/helipopper/is_visible', () => {
   const popperSelector = '.tippy-box .tippy-content';
 
   describe('isVisible attribute', () => {
