@@ -1,5 +1,4 @@
 import {
-  afterEveryRender,
   AfterViewInit,
   computed,
   DestroyRef,
@@ -276,25 +275,8 @@ export class TippyDirective implements OnChanges, AfterViewInit {
 
     this.setupListeners();
 
-    // `afterEveryRender` fires synchronously within Angular's CD cycle.
-    // This lets us update the enabled/disabled state of the instance BEFORE a
-    // synthetic mouseenter event is dispatched, which fixes test timing when
-    // Angular-triggered changes (content/style bindings) cause the overflow
-    // state to change. ResizeObserver (`overflowChanges`) remains as a fallback
-    // for non-Angular-triggered resize events (browser window resize, etc.).
-    afterEveryRender({
-      read: () => {
-        if (!this.onlyTextOverflow()) return;
-        // `afterEveryRender` fires for every render across the whole app, even
-        // while this host is detached from the DOM (recycled virtual-scroll
-        // row, toggled `*ngIf`, teardown). A detached element has no parent and
-        // no meaningful overflow state, so `isElementOverflow` would crash on
-        // `host.parentElement`. Skip until the host is reconnected.
-        const host = this.host();
-        if (!host?.isConnected) return;
-        untracked(() => this.checkOverflow(isElementOverflow(host)));
-      },
-    });
+    // Deliberately no afterEveryRender overflow check: a layout read per directive and tick makes
+    // pages with many tooltips CPU-bound; isOverflowing$ and the onShow guard cover overflow.
 
     this.destroyRef.onDestroy(() => {
       this.destroyed = true;
