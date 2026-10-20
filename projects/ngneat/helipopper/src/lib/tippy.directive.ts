@@ -462,6 +462,7 @@ export class TippyDirective implements OnChanges, AfterViewInit {
           instance.reference.removeAttribute('data-tippy-open');
         }.bind(null),
         onHidden: this.onHidden.bind(this),
+        onUntrigger: this.onUntrigger.bind(this),
       });
     });
 
@@ -597,7 +598,7 @@ export class TippyDirective implements OnChanges, AfterViewInit {
   }
 
   protected checkOverflow(isElementOverflow: boolean) {
-    if (isElementOverflow) {
+    if (isElementOverflow || !this.onlyTextOverflow()) {
       if (!this.instance) {
         this.createInstance();
       } else {
@@ -667,6 +668,37 @@ export class TippyDirective implements OnChanges, AfterViewInit {
     this.visibleInternal.next(isVisible);
 
     this.globalConfig.onHidden?.(instance);
+    this.renewHoverInstance(instance);
+  }
+
+  private onUntrigger(instance: TippyInstance) {
+    // a visible tooltip is renewed in onHidden; without a show (delay not reached, overflow guard) there is no onHidden
+    if (!instance.state.isVisible) {
+      queueMicrotask(() => this.renewHoverInstance(instance));
+    }
+  }
+
+  // tippy.js keeps its last trigger event for good; its relatedTarget is the element the pointer came from and keeps
+  // that element alive after it is removed, e.g. a closed detail with its whole workspace. A new instance drops the event.
+  private async renewHoverInstance(instance: TippyInstance) {
+    if (this.destroyed || !instance || instance !== this.instance || !this.hasHoverTrigger()) {
+      return;
+    }
+
+    const wasEnabled = instance.state.isEnabled;
+    instance.destroy();
+    this.instance = null as any;
+    this.created = false;
+    await this.createInstance();
+    // a tooltip forced by tpOnlyTextOverflow = false stays enabled, like checkOverflow keeps it
+    if (!wasEnabled && this.onlyTextOverflow()) {
+      this.instance?.disable();
+    }
+  }
+
+  private hasHoverTrigger(): boolean {
+    const trigger = (this.props.trigger ?? this.globalConfig.trigger ?? defaultTrigger) as string;
+    return trigger.split(' ').every((t) => t === 'mouseenter' || t === 'focus' || t === 'focusin');
   }
 
   private onShow(instance: TippyInstance) {
