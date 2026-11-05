@@ -484,12 +484,16 @@ export class TippyDirective implements OnChanges, AfterViewInit {
   protected resolveContent(instance: TippyInstance, resolvedContent?: Type<unknown>) {
     const content = (resolvedContent ?? this.content()) as Content | undefined | null;
 
+    // tippy may show again before onHidden of the previous show; the old view would stay attached to the container
+    // and keep its tippy instance (and that instance's last trigger event) alive
+    this.destroyView();
+
     if (!this.viewOptions$ && !isString(content)) {
       const injector = Injector.create({
         providers: [
           {
             provide: TIPPY_REF,
-            useValue: this.instance,
+            useValue: instance,
           },
         ],
         parent: this.injector,
@@ -686,9 +690,11 @@ export class TippyDirective implements OnChanges, AfterViewInit {
     }
 
     const wasEnabled = instance.state.isEnabled;
-    instance.destroy();
+    // destroy() unmounts a still mounted instance and so calls onHidden, which renews again; with the instance
+    // already detached that nested call returns instead of creating a second instance
     this.instance = null as any;
     this.created = false;
+    instance.destroy();
     await this.createInstance();
     // a tooltip forced by tpOnlyTextOverflow = false stays enabled, like checkOverflow keeps it
     if (!wasEnabled && this.onlyTextOverflow()) {
