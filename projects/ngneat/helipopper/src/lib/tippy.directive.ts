@@ -258,6 +258,7 @@ export class TippyDirective implements OnChanges, AfterViewInit {
   private tippyFactory = inject(TippyFactory);
   private destroyed = false;
   private created = false;
+  private listeningForFirstHover = false;
 
   protected globalConfig = inject(TIPPY_CONFIG);
   protected injector = inject(Injector);
@@ -319,7 +320,9 @@ export class TippyDirective implements OnChanges, AfterViewInit {
     if (this.isServer) return;
 
     const onlyTextOverflow = this.onlyTextOverflow();
-    if (this.isLazy()) {
+    if (this.isCreatedOnHover()) {
+      this.listenForFirstHover();
+    } else if (this.isLazy()) {
       const hostInView$ = inView(this.host());
 
       if (onlyTextOverflow) {
@@ -683,7 +686,7 @@ export class TippyDirective implements OnChanges, AfterViewInit {
   }
 
   // tippy.js keeps its last trigger event for good; its relatedTarget is the element the pointer came from and keeps
-  // that element alive after it is removed, e.g. a closed detail with its whole workspace. A new instance drops the event.
+  // that element alive after it is removed. A new instance drops the event.
   private async renewHoverInstance(instance: TippyInstance) {
     if (this.destroyed || !instance || instance !== this.instance || !this.hasHoverTrigger()) {
       return;
@@ -695,6 +698,10 @@ export class TippyDirective implements OnChanges, AfterViewInit {
     this.instance = null as any;
     this.created = false;
     instance.destroy();
+    if (this.isCreatedOnHover()) {
+      this.listenForFirstHover();
+      return;
+    }
     await this.createInstance();
     // a tooltip forced by tpOnlyTextOverflow = false stays enabled, like checkOverflow keeps it
     if (!wasEnabled && this.onlyTextOverflow()) {
@@ -705,6 +712,33 @@ export class TippyDirective implements OnChanges, AfterViewInit {
   private hasHoverTrigger(): boolean {
     const trigger = (this.props.trigger ?? this.globalConfig.trigger ?? defaultTrigger) as string;
     return trigger.split(' ').every((t) => t === 'mouseenter' || t === 'focus' || t === 'focusin');
+  }
+
+  private isCreatedOnHover(): boolean {
+    const trigger = this.props.trigger ?? this.globalConfig.trigger ?? defaultTrigger;
+    return trigger === 'mouseenter' && !this.showOnCreate() && !this.isLazy() && !this.onlyTextOverflow();
+  }
+
+  // stays attached until destroy: renewHoverInstance and emptied content drop the instance, the next hover creates it again
+  private listenForFirstHover() {
+    if (this.listeningForFirstHover) {
+      return;
+    }
+    this.listeningForFirstHover = true;
+    const host = this.host();
+    const onFirstHover = () => {
+      if (this.created) {
+        return;
+      }
+      this.createInstance().then(() => {
+        // tippy listens only from now on; replaying the hover keeps the configured delay for the first one
+        if (this.instance && host.matches(':hover')) {
+          host.dispatchEvent(new Event('mouseenter'));
+        }
+      });
+    };
+    this.ngZone.runOutsideAngular(() => host.addEventListener('mouseenter', onFirstHover));
+    this.destroyRef.onDestroy(() => host.removeEventListener('mouseenter', onFirstHover));
   }
 
   private onShow(instance: TippyInstance) {
@@ -845,7 +879,11 @@ export class TippyDirective implements OnChanges, AfterViewInit {
       const hasContent = this.hasContent();
 
       if (hasContent && !this.instance && !this.isLazy() && !this.onlyTextOverflow()) {
-        this.createInstance();
+        if (untracked(() => this.isCreatedOnHover())) {
+          this.listenForFirstHover();
+        } else {
+          this.createInstance();
+        }
       } else if (!hasContent && this.instance) {
         this.instance.destroy();
         this.instance = null as any;
